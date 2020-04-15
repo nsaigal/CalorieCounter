@@ -1,4 +1,4 @@
-![enter image description here](https://raw.githubusercontent.com/nsaigal/CalorieCounter/master/CalorieApp/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png?token=ADLVG77MJP7Z42H5N4SNE526S535K)
+![App Icon](/CalorieApp/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png?raw=true)
 # Calorie Counter
 iOS app that tracks energy consumption &amp; expenditure over time
 
@@ -28,17 +28,17 @@ iOS app that tracks energy consumption &amp; expenditure over time
 ## UI Design
 The UI for this app was mocked up in Figma to create a wireframe to build from. Icons were taken from free graphic design resources. The Trends screen was built using Apple's CareKitUI library invoking OCKCartesianChartView classes. Since this is a demo app and relatively small, the screens were built using the storyboard and custom XIB files and then tested on multiple device screens.
 
-![enter image description here](https://raw.githubusercontent.com/nsaigal/CalorieCounter/master/Today.PNG?token=ADLVG72AZDZSNXTFRCGHIEC6S6DJA)
+![Today](/Today.PNG?raw=true)
 
-![enter image description here](https://raw.githubusercontent.com/nsaigal/CalorieCounter/master/Add.PNG?token=ADLVG76I76ABUE53FHVH6XC6S6DOY)
+![Add](/Add.PNG?raw=true)
 
-![enter image description here](https://raw.githubusercontent.com/nsaigal/CalorieCounter/master/Menu.PNG?token=ADLVG73ALF26H7L5DTNQV4S6S6DQC)
+![Menu](/Menu.PNG?raw=true)
 
-![enter image description here](https://raw.githubusercontent.com/nsaigal/CalorieCounter/master/Trends.PNG?token=ADLVG74VGKC4JIVM5V3IP3S6S6DR6)
+![Trends](/Trends.PNG?raw=true)
 ### Dark Mode Support
 
-![enter image description here](https://raw.githubusercontent.com/nsaigal/CalorieCounter/master/Trends-Dark.PNG?token=ADLVG7YM6YPABTLSTIT74226S6DS4)
-![enter image description here](https://raw.githubusercontent.com/nsaigal/CalorieCounter/master/Menu-Dark.PNG?token=ADLVG7YNXZK46AMD453642C6S6DTS)
+![Trends-Dark](/Trends-Dark.PNG?raw=true)
+![Menu-Dark](/Menu-Dark.PNG?raw=true)
 
 ## Libraries
 
