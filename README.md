@@ -49,3 +49,7 @@ The UI for this app was mocked up in Figma to create a wireframe to build from. 
  - CareKitUI
 
 ## Demo
+
+<img src="/calorieappdemo.gif?raw=true" width="350"/>
+
+...or check it out [here](https://gfycat.com/harmoniousfatgardensnake) :)
