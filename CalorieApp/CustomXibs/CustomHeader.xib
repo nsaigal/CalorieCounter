@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="CustomHeader" customModule="CalorieApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="497" height="75"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="FX7-sv-7oS">
+                    <rect key="frame" x="30" y="0.0" width="467" height="75"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZPY-0l-1dT">
+                            <rect key="frame" x="0.0" y="25.5" width="327" height="24"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z26-QR-VRH">
+                            <rect key="frame" x="327" y="22.5" width="140" height="30"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                            <state key="normal" title="+ Add Item">
+                                <color key="titleColor" red="0.23137254901960785" green="0.38823529411764707" blue="0.95294117647058818" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="Z26-QR-VRH" firstAttribute="width" secondItem="FX7-sv-7oS" secondAttribute="width" multiplier="0.3" id="0rw-po-6OA"/>
+                    </constraints>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="FX7-sv-7oS" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="30" id="6LY-li-F6N"/>
+                <constraint firstItem="FX7-sv-7oS" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="IS6-39-SaQ"/>
+                <constraint firstAttribute="trailing" secondItem="FX7-sv-7oS" secondAttribute="trailing" id="NIS-oF-Evv"/>
+                <constraint firstAttribute="bottom" secondItem="FX7-sv-7oS" secondAttribute="bottom" id="ZHl-ip-BeV"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="addItemButton" destination="Z26-QR-VRH" id="qWI-jI-oN2"/>
+                <outlet property="textLabel" destination="ZPY-0l-1dT" id="i5u-zR-apt"/>
+            </connections>
+            <point key="canvasLocation" x="197.82608695652175" y="-123.88392857142857"/>
+        </view>
+    </objects>
+</document>
