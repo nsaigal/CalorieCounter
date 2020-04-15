@@ -28,17 +28,19 @@ iOS app that tracks energy consumption &amp; expenditure over time
 ## UI Design
 The UI for this app was mocked up in Figma to create a wireframe to build from. Icons were taken from free graphic design resources. The Trends screen was built using Apple's CareKitUI library invoking OCKCartesianChartView classes. Since this is a demo app and relatively small, the screens were built using the storyboard and custom XIB files and then tested on multiple device screens.
 
-![Today](/Today.PNG?raw=true)
+<p float="left">
+  <img src="/Today.PNG?raw=true" width="200" />
+  <img src="/Add.PNG?raw=true" width="200" />
+  <img src="/Menu.PNG?raw=true" width="200" />
+  <img src="/Trends.PNG?raw=true" width="200" />
+</>
 
-![Add](/Add.PNG?raw=true)
-
-![Menu](/Menu.PNG?raw=true)
-
-![Trends](/Trends.PNG?raw=true)
 ### Dark Mode Support
 
-![Trends-Dark](/Trends-Dark.PNG?raw=true)
-![Menu-Dark](/Menu-Dark.PNG?raw=true)
+<p float="left">
+  <img src="/Trends-Dark.PNG?raw=true" width="250" padding:"100" />
+  <img src="/Menu-Dark.PNG?raw=true" width="250" />
+</>
 
 ## Libraries
 
