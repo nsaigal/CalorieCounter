@@ -17,39 +17,43 @@ class Trends: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var testButton: UIButton!
     var testData: Bool = false
 
+    override func viewWillAppear(_ animated: Bool) {
+
+//        if !testData {
+//            for chart in self.charts {
+//                chart.reloadChart()
+//            }
+//            self.chartTableView.reloadData()
+//        }
+    }
+    
     override func viewDidLoad() {
-        let dayGraph = GraphData(increment: .day, interval: 7, graphTitle: "Over the last 7 days")
-        let weekGraph = GraphData(increment: .weekOfMonth, interval: 4, graphTitle: "Over the last month")
-        let monthGraph = GraphData(increment: .month, interval: 6, graphTitle: "Over the last 6 months")
-        
-        charts = [dayGraph, weekGraph, monthGraph]
-        
-        self.chartTableView.reloadData()
+        loadGraphs()
+    }
+    
+    func loadGraphs() {
+        HealthKitAPI().requestAuthorization(completion: { (success) in
+            let dayGraph = GraphData(increment: .day, interval: 7, graphTitle: "Over the last 7 days", testData: self.testData, useHealthKit: success)
+            let weekGraph = GraphData(increment: .weekOfMonth, interval: 4, graphTitle: "Over the last month", testData: self.testData, useHealthKit: success)
+            let monthGraph = GraphData(increment: .month, interval: 6, graphTitle: "Over the last 6 months", testData: self.testData, useHealthKit: success)
+            
+            self.charts = [dayGraph, weekGraph, monthGraph]
+            
+            DispatchQueue.main.async {
+                if self.testData {
+                    self.testButton.setTitle("Use Real Data", for: .normal)
+                }
+                else {
+                    self.testButton.setTitle("Use Test Data", for: .normal)
+                }
+                self.chartTableView.reloadData()
+            }
+        })
     }
     
     @IBAction func useTestData() {
         testData = !testData
-        if testData {
-            self.testButton.setTitle("Use Real Data", for: .normal)
-            let dayGraph = GraphData(increment: .day, interval: 7, graphTitle: "Over the last 7 days", testData: true)
-            let weekGraph = GraphData(increment: .weekOfMonth, interval: 4, graphTitle: "Over the last month", testData: true)
-            let monthGraph = GraphData(increment: .month, interval: 6, graphTitle: "Over the last 6 months", testData: true)
-            
-            charts = [dayGraph, weekGraph, monthGraph]
-            
-            self.chartTableView.reloadData()
-        }
-        else {
-            self.testButton.setTitle("Use Test Data", for: .normal)
-
-            let dayGraph = GraphData(increment: .day, interval: 7, graphTitle: "Over the last 7 days")
-            let weekGraph = GraphData(increment: .weekOfMonth, interval: 4, graphTitle: "Over the last month")
-            let monthGraph = GraphData(increment: .month, interval: 6, graphTitle: "Over the last 6 months")
-            
-            charts = [dayGraph, weekGraph, monthGraph]
-            
-            self.chartTableView.reloadData()
-        }
+        loadGraphs()
     }
 
     // UITABLEVIEW PROTOCOL METHODS

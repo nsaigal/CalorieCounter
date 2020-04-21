@@ -40,23 +40,22 @@ class AddToDiary: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         self.imageButton.clipsToBounds = true
                 
         self.enableButton()
+        
+        self.menuTableView.register(
+             CustomHeader.nib,
+             forHeaderFooterViewReuseIdentifier:
+                 CustomHeader.reuseIdentifier
+         )
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        DispatchQueue.global(qos: .background).async {
-            APICalls().getMenuItems { (items) in
-                self.menuItems = items
-                DispatchQueue.main.async {
-                    if self.menuItems.count != 0 {
-                        self.menuTableView.register(
-                            CustomHeader.nib,
-                            forHeaderFooterViewReuseIdentifier:
-                                CustomHeader.reuseIdentifier
-                        )
-                        self.menuTableView.reloadData()
-                    }
-                }
-            }
+        self.loadMenuItems()
+    }
+    
+    func loadMenuItems() {
+        APICalls().getMenuItems { (items) in
+            self.menuItems = items
+            self.menuTableView.reloadData()
         }
     }
     

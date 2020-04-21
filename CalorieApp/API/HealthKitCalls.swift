@@ -21,7 +21,7 @@ class HealthKitAPI {
     func requestAuthorization(completion: @escaping (_ success: Bool) -> Void) {
         let writeDataTypes : Set = [HKObjectType.quantityType(forIdentifier: .dietaryEnergyConsumed)!]
         
-        let readDataTypes : Set = [HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!, HKObjectType.quantityType(forIdentifier: .basalEnergyBurned)!]
+        let readDataTypes : Set = [HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!, HKObjectType.quantityType(forIdentifier: .basalEnergyBurned)!, HKObjectType.quantityType(forIdentifier: .dietaryEnergyConsumed)!]
         
         guard HKHealthStore.isHealthDataAvailable() else {
             completion(false)
@@ -40,10 +40,26 @@ class HealthKitAPI {
      - Returns: Calories: double
     */
     func getCaloriesBurned(from: Date, to: Date, completion: @escaping (_ calories: Double) -> Void) {
+        let group = DispatchGroup()
+        
+        var activeCalories = 0.0
+        var restingCalories = 0.0
+        
+        group.enter()
         self.getActiveCaloriesBurned(from: from, to: to) { (activeCals) in
-            self.getBasalCaloriesBurned(from: from, to: to) { (basalCals) in
-                completion(activeCals + basalCals)
-            }
+           activeCalories = activeCals
+           group.leave()
+        }
+        
+        group.enter()
+        self.getBasalCaloriesBurned(from: from, to: to) { (basalCals) in
+           restingCalories = basalCals
+           group.leave()
+       }
+
+        group.wait()
+        group.notify(queue: DispatchQueue.main) {
+            completion(activeCalories + restingCalories)
         }
     }
     
@@ -103,6 +119,46 @@ class HealthKitAPI {
             interval.day = 1
             
         let query = HKStatisticsQuery(quantityType: activeEnergyBurned!, quantitySamplePredicate: predicate, options: .cumulativeSum) { (query, results, error) in
+                if error != nil {
+                    print(error as Any)
+                    return
+                }
+
+                if let myResults = results {
+
+                    if let quantity = myResults.sumQuantity() {
+
+                        let cals = quantity.doubleValue(for: HKUnit.kilocalorie())
+                        completion(cals)
+                        
+                    }
+                    else {
+                        completion(0)
+                    }
+                }
+                else {
+                    completion(0)
+                }
+            }
+
+        self.healthStore.execute(query)
+    }
+    
+    /**
+     Gets consumed calories burned from HealthKit
+     - Parameter from: start timestamp of query
+     - Parameter to: end timestamp of query
+     - Returns: Calories: double
+    */
+    func getConsumedCalories(from: Date, to: Date, completion: @escaping (_ calories: Double) -> Void) {
+
+        let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: [])
+
+        let dietaryEnergyConsumed = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryEnergyConsumed)
+            var interval = DateComponents()
+            interval.day = 1
+            
+        let query = HKStatisticsQuery(quantityType: dietaryEnergyConsumed!, quantitySamplePredicate: predicate, options: .cumulativeSum) { (query, results, error) in
                 if error != nil {
                     print(error as Any)
                     return

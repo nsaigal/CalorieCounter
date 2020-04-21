@@ -25,8 +25,10 @@ class GraphData {
     var interval: Int = 7
     var graphTitle: String = ""
     var testData: Bool = false
-    var healthKitAccess: Bool = false
-        
+    var useHealthKit: Bool = false
+    
+    var chartView: OCKCartesianChartView!
+            
     /**
     Init GraphData object
      - Parameter increment: Unit of time that the graph will compare
@@ -34,15 +36,12 @@ class GraphData {
      - Parameter graphTitle: Title of chart
      - Parameter testData: If true, generate randomized test data to present in graph. If false, pull data from HealthKit/CoreData
      */
-    init(increment: Calendar.Component, interval: Int, graphTitle: String, testData: Bool = false) {
+    init(increment: Calendar.Component, interval: Int, graphTitle: String, testData: Bool = false, useHealthKit: Bool = false) {
         self.increment = increment
         self.interval = interval
         self.graphTitle = graphTitle
         self.testData = testData
-        
-        HealthKitAPI().requestAuthorization(completion: { (success) in
-            self.healthKitAccess = success
-        })
+        self.useHealthKit = useHealthKit
         
         self.loadGraphData()
     }
@@ -71,8 +70,6 @@ class GraphData {
         var from: Date = Date().getStartOfDay()
         
         var to: Date = Calendar.current.date(byAdding: increment, value: +1, to: from)!
-        
-        var loop = interval
                     
         switch increment {
         case .month:
@@ -83,15 +80,7 @@ class GraphData {
             break
         }
         
-        for i in 0..<loop {
-            if !testData {
-                consumedData.append(APICalls().getConsumedCaloriesForTimeframe(start: from, end: to))
-                if healthKitAccess {
-                    HealthKitAPI().getCaloriesBurned(from: from, to: to, completion: { (calories) in
-                        self.burnedData.append(CGFloat(calories))
-                    })
-                }
-            }
+        for _ in 0..<interval {
             
             self.fromDates.append(from)
             self.toDates.append(to)
@@ -107,8 +96,39 @@ class GraphData {
             self.useTestData()
         }
         else {
-            consumedData = consumedData.reversed()
-            burnedData = burnedData.reversed()
+            if useHealthKit {
+                self.ingestData()
+            }
+            else {
+                self.consumedData.append(APICalls().getConsumedCaloriesForTimeframe(start: from, end: to))
+            }
+        }
+    }
+    
+    func ingestData() {
+        guard let _: Bool = self.fromDates.count > 0 && self.toDates.count > 0 else {
+            return
+        }
+        
+        let group = DispatchGroup()
+        for index in 0..<interval {
+            group.enter()
+            HealthKitAPI().getCaloriesBurned(from: self.fromDates[index], to: self.toDates[index], completion: { (caloriesBurned) in
+                self.burnedData.append(CGFloat(caloriesBurned))
+                group.leave()
+            })
+            
+            group.enter()
+            HealthKitAPI().getConsumedCalories(from: self.fromDates[index], to: self.toDates[index], completion: { (caloriesEaten) in
+                self.consumedData.append(CGFloat(caloriesEaten))
+                group.leave()
+            })
+
+            group.wait()
+        }
+        
+        group.notify(queue: DispatchQueue.main) {
+            print("health kit data ingested")
         }
     }
 
@@ -160,16 +180,53 @@ class GraphData {
         
         if !testData {
             if self.increment == .month {
-                self.consumedData = self.consumedData.map { $0/30}
-                self.burnedData = self.burnedData.map { $0/30}
+                let firstOfMonth: Date = Date().getFirstOfMonth()
+                let dateComp = Calendar.current.dateComponents([.day, .hour], from: firstOfMonth, to: Date())
+                var noOfDays = dateComp.day ?? 29
+                if dateComp.hour ?? 0 > 12 {
+                    noOfDays += 1
+                }
+                
+                for index in 0..<self.consumedData.count {
+                    if index == self.consumedData.count-1 {
+                        self.consumedData[index] /= CGFloat(noOfDays)
+                        break
+                    }
+                    self.consumedData[index] /= 30
+                }
+                for index in 0..<self.burnedData.count {
+                    if index == self.burnedData.count-1 {
+                        self.burnedData[index] /= CGFloat(noOfDays)
+                        break
+                    }
+                    self.burnedData[index] /= 30
+                }
             }
             if self.increment == .weekOfMonth {
-                self.consumedData = self.consumedData.map { $0/7}
-                self.burnedData = self.burnedData.map { $0/7}
+                let firstOfWeek: Date = Date().getLastSunday()
+                let dateComp = Calendar.current.dateComponents([.day, .hour], from: firstOfWeek, to: Date())
+                var noOfDays = dateComp.day ?? 6
+                if dateComp.hour ?? 0 > 12 {
+                    noOfDays += 1
+                }
+                
+                for index in 0..<self.consumedData.count {
+                    if index == self.consumedData.count-1 {
+                        self.consumedData[index] /= CGFloat(noOfDays)
+                        break
+                    }
+                    self.consumedData[index] /= 7
+                }
+                for index in 0..<self.burnedData.count {
+                    if index == self.burnedData.count-1 {
+                        self.burnedData[index] /= CGFloat(noOfDays)
+                    }
+                    self.burnedData[index] /= 7
+                }
             }
         }
         
-        cv.graphView.yMinimum = -20
+        cv.graphView.yMinimum = 0
         if burnedData.count > 0 && consumedData.count > 0 {
             let burnedMax: CGFloat = self.burnedData.max()!
             let consumedMax: CGFloat = self.consumedData.max()!
@@ -189,7 +246,23 @@ class GraphData {
             data,
             data2
         ]
-
+            
+        self.chartView = cv
+        
         return cv
+    }
+    
+    /**
+    Reloads chart view
+     - Returns: N/A
+     */
+    func reloadChart() {
+        self.fromDates = []
+        self.toDates = []
+        self.burnedData = []
+        self.consumedData = []
+        
+        loadGraphData()
+        createChartFromGraph()
     }
 }
